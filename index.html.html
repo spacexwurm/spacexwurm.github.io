@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lebenserwartung Rechner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      text-align: center;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .input-box {
+      margin: 10px;
+      text-align: left;
+      width: 50%;
+    }
+    input,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Lebenserwartung</h1>
+  
+  <div class="input-box">
+    <label for="geschlecht">Geschlecht:</label>
+    <select id="geschlecht">
+      <option value="maennlich">Männlich</option>
+      <option value="weiblich">Weiblich</option>
+    </select>
+  </div>
+  
+  <div class="input-box">
+    <label for="geburtsjahr">Geburtsjahr:</label>
+    <input type="number" id="geburtsjahr" placeholder="z.B. 1990">
+  </div>
+  
+  <div class="input-box">
+    <label for="gewicht">Gewicht:</label>
+    <select id="gewicht">
+      <option value="normal">Normal</option>
+      <option value="untergewicht">Untergewicht</option>
+      <option value="übergewicht">Übergewicht</option>
+    </select>
+  </div>
+
+  <div class="input-box">
+    <label for="bildung">Bildung:</label>
+    <select id="bildung">
+      <option value="hoch">Hoch</option>
+      <option value="niedrig">Niedrig</option>
+    </select>
+  </div>
+
+  <div class="input-box">
+    <label for="sportlichkeit">Sportlichkeit:</label>
+    <select id="sportlichkeit">
+      <option value="aktiv">Aktiv</option>
+      <option value="gelegentlich">Gelegentlich</option>
+      <option value="inaktiv">Inaktiv</option>
+    </select>
+  </div>
+
+  <div class="input-box">
+    <label for="ernaehrung">Ernährungsweise:</label>
+    <select id="ernaehrung">
+      <option value="gesund">Gesund</option>
+      <option value="ungesund">Ungesund</option>
+    </select>
+  </div>
+
+  <div class="input-box">
+    <label for="alkohol">Alkoholkonsum:</label>
+    <select id="alkohol">
+      <option value="gelegentlich">Gelegentlich</option>
+      <option value="regelmaessig">Regelmäßig</option>
+      <option value="abstinent">Abstinent</option>
+    </select>
+  </div>
+
+  <div class="input-box">
+    <label for="tabak">Tabakkonsum:</label>
+    <select id="tabak">
+      <option value="raucher">Raucher</option>
+      <option value="nichtraucher">Nichtraucher</option>
+    </select>
+  </div>
+
+  <div class="input-box">
+    <label for="stress">Stresslevel:</label>
+    <select id="stress">
+      <option value="niedrig">Niedrig</option>
+      <option value="mittel">Mittel</option>
+      <option value="hoch">Hoch</option>
+    </select>
+  </div>
+  
+  <p>Lebenserwartung: <span id="lebenserwartung">---</span></p>
+  <button onclick="berechneLebenserwartung()">Berechnen</button>
+</div>
+  
+<script>
+  // Grundlebenserwartung
+  const grundLebenserwartungM = 78.3;
+  const grundLebenserwartungF = 83.2;
+  
+  // Einfluss der Parameter
+  const einflussBildung = {
+    hochM: 3.8,
+    niedrigM: -3.8,
+    hochF: 2,
+    niedrigF: -2,
+  };
+
+  const einflussSportlichkeit = {
+    aktiv: 3,
+    gelegentlich: 0,
+    inaktiv: -3,
+  };
+
+  const einflussErnaehrung = {
+    gesund: 0,
+    ungesund: -2,
+  };
+
+  const einflussAlkohol = {
+    gelegentlich: -2,
+    regelmaessig: -5,
+    abstinent: 0,
+  };
+
+  const einflussTabak = {
+    raucher: -7,
+    nichtraucher: 0,
+  };
+
+  const einflussStress = {
+    niedrig: 0,
+    mittel: -3,
+    hoch: -6,
+  };
+  
+  const einflussGewicht = {
+    untergewicht: -3,
+    normal: 0,
+    übergewicht: -3,
+  };
+
+
+  // Funktion zur Berechnung der Beeinflussung durch das Alter
+  function berechneAlterBeeinflussung(geburtsjahr) {
+    const aktuellesJahr = new Date().getFullYear();
+    const minGueltigesJahr = 1950;
+    const maxGueltigesJahr = 2050;
+
+    if (geburtsjahr >= minGueltigesJahr && geburtsjahr <= maxGueltigesJahr) {
+      const alterBeeinflussung = 0.1875 * geburtsjahr - 375;
+      return alterBeeinflussung;
+    } else {
+      // Wenn das Geburtsjahr außerhalb des gültigen Bereichs liegt
+      alert("Ungültiges Geburtsjahr. Bitte geben Sie ein Jahr zwischen 1950 und 2050 ein.");
+      document.getElementById("lebenserwartung").textContent = "Falsche Eingabe";
+      return 0; // Alternativ könnte hier ein Default-Wert zurückgegeben werden
+    }
+  }
+
+  // Funktion zur Berechnung der Beeinflussung durch das Gewicht
+  function berechneGewichtBeeinflussung(gewicht) {
+    const kategorie = document.getElementById("gewicht").value;
+    const normalBeeinflussung = 0;
+    const untergewichtBeeinflussung = -4;
+    const uebergewichtBeeinflussung = -3;
+
+    if (kategorie === "normal") {
+      return normalBeeinflussung;
+    } else if (kategorie === "untergewicht") {
+      return untergewichtBeeinflussung;
+    } else if (kategorie === "uebergewicht") {
+      return uebergewichtBeeinflussung;
+    } else {
+      alert("Ungültige Gewichtskategorie.");
+      document.getElementById("lebenserwartung").textContent = "Falsche Eingabe";
+      return 0;
+    }
+  }
+
+  // Berechnung der Lebenserwartung
+  function berechneLebenserwartung() {
+    const geschlecht = document.getElementById("geschlecht").value;
+    const geburtsjahr = document.getElementById("geburtsjahr").value;
+    const bildung = document.getElementById("bildung").value;
+    const sportlichkeit = document.getElementById("sportlichkeit").value;
+    const ernaehrung = document.getElementById("ernaehrung").value;
+    const alkohol = document.getElementById("alkohol").value;
+    const tabak = document.getElementById("tabak").value;
+    const stress = document.getElementById("stress").value;
+    const gewicht = document.getElementById("gewicht").value;
+
+    let beeinflussunggeschlecht = 0;
+    let beeinflussungbildung = 0;
+    let beeinflussungsportlichkeit = 0;
+    let beeinflussungernaehrung = 0;
+    let beeinflussungalkohol = 0;
+    let beeinflussungtabak = 0;
+    let beeinflussungstress = 0;
+    let beeinflussunggewicht = 0;
+
+    if (geschlecht === "maennlich") {
+      beeinflussunggeschlecht = grundLebenserwartungM;
+    } else if (geschlecht === "weiblich") {
+      beeinflussunggeschlecht = grundLebenserwartungF;
+    }
+
+    if (bildung === "hoch") {
+      beeinflussungbildung = geschlecht === "maennlich" ? einflussBildung.hochM : einflussBildung.hochF;
+    } else if (bildung === "niedrig") {
+      beeinflussungbildung = geschlecht === "maennlich" ? einflussBildung.niedrigM : einflussBildung.niedrigF;
+    }
+
+    beeinflussungsportlichkeit = einflussSportlichkeit[sportlichkeit];
+    beeinflussungernaehrung = einflussErnaehrung[ernaehrung];
+    beeinflussungalkohol = einflussAlkohol[alkohol];
+    beeinflussungtabak = einflussTabak[tabak];
+    beeinflussungstress = einflussStress[stress];
+    beeinflussunggewicht = einflussGewicht[gewicht];
+
+    const alterBeeinflussung = berechneAlterBeeinflussung(geburtsjahr);
+    const berechneteLebenserwartung = beeinflussunggeschlecht + beeinflussungbildung + beeinflussungsportlichkeit + beeinflussungernaehrung + beeinflussungalkohol + beeinflussungtabak + beeinflussungstress + alterBeeinflussung + beeinflussunggewicht;
+
+    document.getElementById("lebenserwartung").textContent = isNaN(berechneteLebenserwartung) ? "Ungültige Eingabe" : berechneteLebenserwartung.toFixed(2) + " Jahre";
+  }
+</script>
+
+</body>
+</html>
